@@ -4,7 +4,7 @@
 package it.playermove.model;
 
 import it.playermove.common.Point;
-import it.playermove.control.PlayerService;
+import it.playermove.control.EventService;
 
 public class BlockWithEvent extends Block {
     
@@ -21,7 +21,7 @@ public class BlockWithEvent extends Block {
         this.dialog = dialog;
     }
     
-    public void execute(final PlayerService service) {
+    public void execute(final EventService service) {
         service.print(this.dialog);
         if(this.eventObject != null) {
             service.addToBackpack(this.eventObject);

@@ -7,12 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import it.playermove.graphics.Scene;
+import it.playermove.graphics.SwingScene;
 import it.playermove.model.GameEvent;
 
 public class BaseController {
     
     private static final long PERIOD = 20;
-    private final Scene view;
+    private Scene view;
     private final List<GameEvent> eventQueue;
     
     public BaseController() {
@@ -22,7 +23,7 @@ public class BaseController {
     public final void initGame() {
         //this.gameState = new GameState(this);
         //this.controller = new InputControllerImpl();
-       // this.view = new SwingScene(this.gameState, this.controller);
+       this.view = new SwingScene(/*this.gameState, this.controller*/);
     }
     
     public void mainLoop() {

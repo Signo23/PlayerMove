@@ -9,6 +9,8 @@ public final class App {
     private App() { }
 
     public static void main(final String[] args) {
-
+        final BaseController bc = new BaseController();
+        bc.initGame();
+        bc.mainLoop();
     }
 }

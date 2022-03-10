@@ -4,27 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
-    private Player player;
     private int width;
     private int heigth;
     private List<Block> blocks;
     
-    public Map(final Player player, final int width, final int heigth) {
-        this.player = player;
+    public Map(final int width, final int heigth) {
         this.width = width;
         this.heigth = heigth;
         this.blocks = new ArrayList<>();
     }
     
-    public Map(final Player player) {
-        this(player, 32, 32);
-    }
-
-    /**
-     * @return the player
-     */
-    public Player getPlayer() {
-        return player;
+    public Map() {
+        this( 32, 32);
     }
 
     /**
