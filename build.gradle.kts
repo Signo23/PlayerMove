@@ -33,7 +33,8 @@ val javaFxVersion = 15
 dependencies {
     // Example library: Guava. Add what you need (and remove Guava if you don't use it)
     // implementation("com.google.guava:guava:28.1-jre")
-
+    implementation("com.github.almasb:fxgl:11.17")
+    
     // JavaFX: comment out if you do not need them
     for (platform in supportedPlatforms) {
         for (module in javaFXModules) {
