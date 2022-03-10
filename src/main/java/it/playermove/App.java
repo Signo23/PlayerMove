@@ -3,14 +3,96 @@
  */
 package it.playermove;
 
+import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.components.CollidableComponent;
+
+import it.playermove.common.EntityType;
+
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import java.util.Map;
+
 /** Main application entry-point. */
 
-public final class App {
-    private App() { }
+public final class App extends GameApplication {
+    
+    private static final String PIXELS_MOVED = "pixelsMoved";
+    private Entity player;
+    
+    @Override
+    protected void initSettings(final GameSettings settings) {
+        settings.setWidth(600);
+        settings.setHeight(600);
+        settings.setTitle("Game");
+        settings.setVersion("0.0.1a");
+    }
+    
+    @Override
+    protected void initGame() {
+        this.player = FXGL.entityBuilder()
+                .type(EntityType.PLAYER)
+                .at(300, 300)
+                .view(new Rectangle(25, 25, Color.BLUE))
+                .with(new CollidableComponent(true))
+                .buildAndAttach();
+        
+        FXGL.entityBuilder()
+        .type(EntityType.BLOCK)
+        .at(500, 200)
+        .view(new Rectangle(15, 15, Color.BROWN))
+        .with(new CollidableComponent(true))
+        .buildAndAttach();
+    }
+    
+    @Override
+    protected void initPhysics() {
+        
+    }
+    
+    @Override
+    protected void initInput() {
+        FXGL.onKey(KeyCode.D, () -> {
+            this.player.translateX(5); // move right 5 pixels
+            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+        });
 
+        FXGL.onKey(KeyCode.A, () -> {
+            this.player.translateX(-5); // move left 5 pixels
+            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+        });
+
+        FXGL.onKey(KeyCode.W, () -> {
+            this.player.translateY(-5); // move up 5 pixels
+            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+        });
+
+        FXGL.onKey(KeyCode.S, () -> {
+            this.player.translateY(5); // move down 5 pixels
+            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+        });
+    }
+    
+    @Override
+    protected void initUI() {
+        final Text tx = new Text();
+        tx.setTranslateX(50);
+        tx.setTranslateY(100);
+        tx.textProperty().bind(FXGL.getWorldProperties().intProperty(PIXELS_MOVED).asString());
+        
+        FXGL.getGameScene().addUINode(tx);
+    }
+    
+    @Override
+    protected void initGameVars(final Map<String, Object> vars) {
+        vars.put(PIXELS_MOVED, 0);
+    }
+    
     public static void main(final String[] args) {
-        final BaseController bc = new BaseController();
-        bc.initGame();
-        bc.mainLoop();
+        launch(args);
     }
 }
