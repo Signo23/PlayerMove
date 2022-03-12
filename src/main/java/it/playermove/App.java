@@ -8,13 +8,15 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.physics.CollisionHandler;
 
 import it.playermove.common.EntityType;
-
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** Main application entry-point. */
@@ -22,58 +24,98 @@ import java.util.Map;
 public final class App extends GameApplication {
     
     private static final String PIXELS_MOVED = "pixelsMoved";
+    private static final int PIXELS_TO_MOVE = 3;
     private Entity player;
     
     @Override
     protected void initSettings(final GameSettings settings) {
-        settings.setWidth(600);
-        settings.setHeight(600);
+        settings.setWidth(512);
+        settings.setHeight(512);
         settings.setTitle("Game");
         settings.setVersion("0.0.1a");
     }
     
     @Override
     protected void initGame() {
+        
         this.player = FXGL.entityBuilder()
                 .type(EntityType.PLAYER)
-                .at(300, 300)
-                .view(new Rectangle(25, 25, Color.BLUE))
+                .at(0, 256)
+                .viewWithBBox("player.png")
                 .with(new CollidableComponent(true))
                 .buildAndAttach();
         
         FXGL.entityBuilder()
         .type(EntityType.BLOCK)
-        .at(500, 200)
-        .view(new Rectangle(15, 15, Color.BROWN))
+        .at(150, 200)
+        .viewWithBBox("chest.png")
         .with(new CollidableComponent(true))
         .buildAndAttach();
-    }
-    
-    @Override
-    protected void initPhysics() {
         
+        FXGL.getGameScene().setBackgroundRepeat(FXGL.getAssetLoader().loadImage("level-one.png"));
     }
+
     
     @Override
     protected void initInput() {
         FXGL.onKey(KeyCode.D, () -> {
-            this.player.translateX(5); // move right 5 pixels
-            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+            final List<Point2D> blocksPositions = getBlocksPositions();
+            final Point2D newPlyPos = this.player.getPosition().add(PIXELS_TO_MOVE, 0);
+            if(!blocksPositions.contains(newPlyPos)) {
+                this.player.translateX(PIXELS_TO_MOVE); // move right 5 pixels
+                FXGL.inc(PIXELS_MOVED, +PIXELS_TO_MOVE); //increment the variable
+            }
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            this.player.translateX(-5); // move left 5 pixels
-            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+            final List<Point2D> blocksPositions = getBlocksPositions();
+            final Point2D newPlyPos = this.player.getPosition().add(-PIXELS_TO_MOVE, 0);
+            if(!blocksPositions.contains(newPlyPos)) {
+                this.player.translateX(-PIXELS_TO_MOVE); // move left 5 pixels
+                FXGL.inc(PIXELS_MOVED, +PIXELS_TO_MOVE); //increment the variable
+            }
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            this.player.translateY(-5); // move up 5 pixels
-            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+            final List<Point2D> blocksPositions = getBlocksPositions();
+            final Point2D newPlyPos = this.player.getPosition().add(0, -PIXELS_TO_MOVE);
+            if(!blocksPositions.contains(newPlyPos)) {
+                this.player.translateY(-PIXELS_TO_MOVE); // move up 5 pixels
+                FXGL.inc(PIXELS_MOVED, +PIXELS_TO_MOVE); //increment the variable
+            }
+
         });
 
         FXGL.onKey(KeyCode.S, () -> {
-            this.player.translateY(5); // move down 5 pixels
-            FXGL.inc(PIXELS_MOVED, +5); //increment the variable
+            final List<Point2D> blocksPositions = getBlocksPositions();
+            final Point2D newPlyPos = this.player.getPosition().add(0, PIXELS_TO_MOVE);
+            if(!blocksPositions.contains(newPlyPos)) {
+                this.player.translateY(PIXELS_TO_MOVE); // move down 5 pixels
+                FXGL.inc(PIXELS_MOVED, +PIXELS_TO_MOVE); //increment the variable
+            }
+
+        });
+
+    }
+
+    private List<Point2D> getBlocksPositions() {
+        final List<Entity> blocks = FXGL.getGameWorld().getEntitiesByType(EntityType.BLOCK);
+        final List<Point2D> blocksPositions = new ArrayList<>();
+        for(final Entity block : blocks) {
+           blocksPositions.add(block.getPosition());
+        }
+        return blocksPositions;
+    }
+    
+    @Override
+    protected void initPhysics() {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BLOCK) {
+
+            // order of types is the same as passed into the constructor
+            @Override
+            protected void onCollisionBegin(final Entity player, final Entity coin) {
+                System.out.println("Collision");
+            }
         });
     }
     
