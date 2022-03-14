@@ -31,8 +31,8 @@ public final class App extends GameApplication {
     protected void initSettings(final GameSettings settings) {
         settings.setWidth(512);
         settings.setHeight(512);
-        settings.setTitle("Game");
-        settings.setVersion("0.0.1a");
+        settings.setTitle("Aren's Adventures");
+        settings.setVersion("0.1.1-alpha");
     }
     
     @Override
